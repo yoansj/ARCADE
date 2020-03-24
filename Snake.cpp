@@ -5,6 +5,9 @@
 ** snake
 */
 
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+
 #include "Snake.hpp"
 
 //Cherche un event dans un vector d'event
@@ -107,6 +110,50 @@ Snake::Snake() : _size(4), _score(0), _speed(1), _dir((Direction)(std::rand() % 
 
 int main(int argc, char **argv)
 {
+    Snake jeu;
+    sf::RenderWindow window(sf::VideoMode(700, 720), "SnakeTest", sf::Style::Titlebar | sf::Style::Close);
+    sf::Clock cloque;
+    sf::Event event;
+    std::vector<ArcadeKey> touches;
+
+    window.setFramerateLimit(60);
+
+    while (window.isOpen()) {
+        window.clear(sf::Color::Blue);
+
+        //push back un touche vide pour qu'il n'y ait pas de seg fault dans la fonction qui cherche un event dans le tableau
+        touches.push_back(ArcadeKey::NONE);
+
+        //update le jeu toutes les 0.2s
+        if (cloque.getElapsedTime().asSeconds() >= 0.2) {
+            jeu.run();
+            cloque.restart();
+        }
+
+        //process les event
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
+                touches.push_back(ArcadeKey::QUIT);
+                window.close();
+            }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P)
+                touches.push_back(ArcadeKey::PAUSE);
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z)
+                touches.push_back(ArcadeKey::UP);
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S)
+                touches.push_back(ArcadeKey::DOWN);
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q)
+                touches.push_back(ArcadeKey::LEFT);
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D)
+                touches.push_back(ArcadeKey::RIGHT);
+        }
+
+        std::vector<sf::Sprite> sprites;
+
+        //envoyer les evenements au jeu
+        jeu.setEvent(touches);
+    }
+
     return (0);
 }
 

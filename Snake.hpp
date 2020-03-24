@@ -18,7 +18,7 @@
 class Snake : public IGames {
     public:
         Snake();
-        ~Snake();
+        ~Snake() = default;
 
     enum Direction {
         UP,
@@ -59,6 +59,9 @@ class Snake : public IGames {
     void setEvent(std::vector<ArcadeKey> eventArray) override;
 
     bool findEvent(ArcadeKey event, std::vector<ArcadeKey> eventArray);
+
+    std::vector<Position> getSnakePositions() {return (_positions);};
+    Position getFruit() {return (_fruit);};
 
     private:
         int _size;
