@@ -118,11 +118,11 @@ int main(int argc, char **argv)
     window.setFramerateLimit(60);
 
     sf::Texture pomme;
-    pomme.loadFromFile("src/apple.png");
+    pomme.loadFromFile("assets/apple.png");
     sf::Texture head;
-    head.loadFromFile("src/head.png");
+    head.loadFromFile("assets/head.png");
     sf::Texture body;
-    body.loadFromFile("src/body.png");
+    body.loadFromFile("assets/body.png");
 
     while (window.isOpen()) {
         window.clear(sf::Color::Blue);
