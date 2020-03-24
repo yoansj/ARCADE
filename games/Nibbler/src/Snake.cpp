@@ -60,47 +60,31 @@ void Snake::run()
             //std::cout << "T'es mort" << std::endl; //Ligne de collision avec soi même à changer
     }
 
-    /* Check collision avec un fruit */
-    if (_positions[0].getX() && _positions[0].getY() == _fruit.getX() && _fruit.getY()) {
-        _score += 1;
-        _size += 1;
-        _fruit = Position(std::rand() % 42, std::rand() % 42); //tp le fruit ligne à changer en prenant en compte la taille de l'écran
-        _positions.push_back(Position(_positions[_positions.size() - 1]));
+    /* Update des positions peut être à mettre dans une fonction membre */
+    Position npos = _positions[0];
+    if (_dir == UP)
+        npos.setY(npos.getY() - _speed);
+    if (_dir == DOWN)
+        npos.setY(npos.getY() + _speed);
+    if (_dir == RIGHT)
+        npos.setX(npos.getX() + _speed);
+    if (_dir == LEFT)
+        npos.setX(npos.getX() - _speed);
+    _positions.insert(_positions.begin(), npos);
 
-        for (int i = 0; _positions.begin() + i != _positions.end(); i++)
-        {
+    /* Check collision avec un fruit */
+    if (_positions[0].getX() == _fruit.getX() && _positions[0].getY() == _fruit.getY()) {
+        _score += 1;
+        _fruit = Position(std::rand() % 30, std::rand() % 30);
+        for (int i = 0; _positions.begin() + i != _positions.end(); i++) {
             if (_positions[i].getX() == _fruit.getX() && _positions[i].getY() == _fruit.getY()) {
-                _fruit = Position(std::rand() % 42, std::rand() % 42);
+                _fruit = Position(std::rand() % 30, std::rand() % 30);
                 i = 0;
             }
         }
-    }
+    } else
+        _positions.pop_back();
 
-    /* Update des positions peut être à mettre dans une fonction membre */
-    if (_dir == UP) {
-        //std::cout << "Haut\n";
-        _positions[0].setY(_positions[0].getY() - _speed);
-    }
-    if (_dir == DOWN) {
-        //std::cout << "Bas\n";
-        _positions[0].setY(_positions[0].getY() + _speed);
-    }
-    if (_dir == RIGHT) {
-        //std::cout << "Right\n";
-        _positions[0].setX(_positions[0].getX() + _speed);
-    }
-    if (_dir == LEFT) {
-        //std::cout << "Left\n";
-        _positions[0].setX(_positions[0].getX() - _speed);
-    }
-
-    Position prev(_positions[0].getX(), _positions[0].getY());
-    Position pprev = _positions[1];
-    for (int i = 1; _positions.begin() + i != _positions.end(); i++) {
-        pprev = _positions[i];
-        _positions[i] = prev;
-        prev = pprev;
-    }
     //std::cout << "Taille : " << _positions.size() << std::endl;
     //std::cout << "Score : " << _score << std::endl;
     std::cout << "Fruit : " << _fruit.getX() << ": " << _fruit.getY() << std::endl;
@@ -110,7 +94,7 @@ void Snake::close()
 {
 }
 
-Snake::Snake() : _size(4), _score(0), _speed(1), _dir(RIGHT), _fruit(std::rand() % 42, std::rand() % 42), _paused(false)
+Snake::Snake() : _score(0), _speed(1), _dir(RIGHT), _fruit(std::rand() % 30, std::rand() % 30), _paused(false)
 {
     Position s(3, 0);
     Position sa(2, 0);
@@ -128,10 +112,17 @@ int main(int argc, char **argv)
 {
     srand(time(NULL));
     Snake jeu;
-    sf::RenderWindow window(sf::VideoMode(1000, 1000), "SnakeTest", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(32 * 30, 32 * 30), "SnakeTest", sf::Style::Titlebar | sf::Style::Close);
     sf::Clock cloque;
     sf::Event event;
     window.setFramerateLimit(60);
+
+    sf::Texture pomme;
+    pomme.loadFromFile("src/apple.png");
+    sf::Texture head;
+    head.loadFromFile("src/head.png");
+    sf::Texture body;
+    body.loadFromFile("src/body.png");
 
     while (window.isOpen()) {
         window.clear(sf::Color::Blue);
@@ -168,15 +159,6 @@ int main(int argc, char **argv)
         test.push_back(new sf::Sprite);
         test.push_back(new sf::Sprite);
 
-        sf::Texture pomme;
-        pomme.loadFromFile("apple.png");
-
-        sf::Texture head;
-        head.loadFromFile("head.png");
-
-        sf::Texture body;
-        body.loadFromFile("body.png");
-
         std::vector<Snake::Position> pos = jeu.getSnakePositions();
 
         test[0]->setTexture(pomme);
@@ -202,6 +184,3 @@ int main(int argc, char **argv)
 
     return (0);
 }
-
-//sprite:test file:truc.png x:128 y:128
-//text:Bonjour à tous file:emoji.ttf x:100 y:0

@@ -29,7 +29,7 @@ class Snake : public IGames {
 
     class Position {
         public:
-            Position(int x = 0, int y = 0) : _x(0), _y(0) {};
+            Position(int x = 0, int y = 0) : _x(x), _y(y) {};
             ~Position() = default;
 
             Position(Position const &cpy) : _x(cpy.getX()), _y(cpy.getY()) {};
@@ -39,7 +39,7 @@ class Snake : public IGames {
                 _x = other._x;
                 _y = other._y;
                 return (*this);
-            }
+            };
 
             void setX(int x) {_x = x;};
             void setY(int y) {_y = y;};
@@ -64,7 +64,6 @@ class Snake : public IGames {
     Position getFruit() {return (_fruit);};
 
     private:
-        int _size;
         int _score;
         int _speed;
         Direction _dir;
