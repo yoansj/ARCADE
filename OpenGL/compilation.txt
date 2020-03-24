@@ -1,3 +1,5 @@
 g++ playground.cpp -lglfw -lGLEW -lGLU -lGL
 
 l'ordre des libs est important le changer peut fuck up la compilation
+
+Fedora : sudo yum install -y glfw-devel gcc
