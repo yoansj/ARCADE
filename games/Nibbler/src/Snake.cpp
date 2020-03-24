@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "Snake.hpp"
+#include "../include/Snake.hpp"
 
 //Cherche un event dans un vector d'event
 //Renvoie true si l'event est trouvé
@@ -56,8 +56,8 @@ void Snake::run()
 
     /* Collision avec soi même */
     for (int i = 1; _positions.begin() + i != _positions.end(); i++) {
-        if (_positions[0].getX() == _positions[i].getX() && _positions[0].getY() == _positions[i].getY())
-            std::cout << "T'es mort" << std::endl; //Ligne de collusion avec soi même à changer
+        //if (_positions[0].getX() == _positions[i].getX() && _positions[0].getY() == _positions[i].getY())
+            //std::cout << "T'es mort" << std::endl; //Ligne de collision avec soi même à changer
     }
 
     /* Check collision avec un fruit */
@@ -77,10 +77,22 @@ void Snake::run()
     }
 
     /* Update des positions peut être à mettre dans une fonction membre */
-    if (_dir == UP) _positions[0].setY(_positions[0].getY() - _speed);
-    if (_dir == DOWN) _positions[0].setY(_positions[0].getY() + _speed);
-    if (_dir == RIGHT) _positions[0].setX(_positions[0].getX() + _speed);
-    if (_dir == LEFT) _positions[0].setX(_positions[0].getX() - _speed);
+    if (_dir == UP) {
+        //std::cout << "Haut\n";
+        _positions[0].setY(_positions[0].getY() - _speed);
+    }
+    if (_dir == DOWN) {
+        //std::cout << "Bas\n";
+        _positions[0].setY(_positions[0].getY() + _speed);
+    }
+    if (_dir == RIGHT) {
+        //std::cout << "Right\n";
+        _positions[0].setX(_positions[0].getX() + _speed);
+    }
+    if (_dir == LEFT) {
+        //std::cout << "Left\n";
+        _positions[0].setX(_positions[0].getX() - _speed);
+    }
 
     Position prev(_positions[0].getX(), _positions[0].getY());
     Position pprev = _positions[1];
@@ -89,13 +101,16 @@ void Snake::run()
         _positions[i] = prev;
         prev = pprev;
     }
+    //std::cout << "Taille : " << _positions.size() << std::endl;
+    //std::cout << "Score : " << _score << std::endl;
+    std::cout << "Fruit : " << _fruit.getX() << ": " << _fruit.getY() << std::endl;
 }
 
 void Snake::close()
 {
 }
 
-Snake::Snake() : _size(4), _score(0), _speed(1), _dir((Direction)(std::rand() % 4)), _fruit(std::rand() % 42, std::rand() % 42), _paused(false)
+Snake::Snake() : _size(4), _score(0), _speed(1), _dir(RIGHT), _fruit(std::rand() % 42, std::rand() % 42), _paused(false)
 {
     Position s(3, 0);
     Position sa(2, 0);
@@ -106,21 +121,22 @@ Snake::Snake() : _size(4), _score(0), _speed(1), _dir((Direction)(std::rand() % 
     _positions.push_back(sa);
     _positions.push_back(sah);
     _positions.push_back(sahh);
+    std::cout << _fruit.getX() << ":" << _fruit.getY() << std::endl;
 }
 
 int main(int argc, char **argv)
 {
+    srand(time(NULL));
     Snake jeu;
-    sf::RenderWindow window(sf::VideoMode(700, 720), "SnakeTest", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(1000, 1000), "SnakeTest", sf::Style::Titlebar | sf::Style::Close);
     sf::Clock cloque;
     sf::Event event;
-    std::vector<ArcadeKey> touches;
-
     window.setFramerateLimit(60);
 
     while (window.isOpen()) {
         window.clear(sf::Color::Blue);
 
+        std::vector<ArcadeKey> touches;
         //push back un touche vide pour qu'il n'y ait pas de seg fault dans la fonction qui cherche un event dans le tableau
         touches.push_back(ArcadeKey::NONE);
 
@@ -132,7 +148,7 @@ int main(int argc, char **argv)
 
         //process les event
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 touches.push_back(ArcadeKey::QUIT);
                 window.close();
             }
@@ -148,8 +164,38 @@ int main(int argc, char **argv)
                 touches.push_back(ArcadeKey::RIGHT);
         }
 
-        std::vector<sf::Sprite> sprites;
+        std::vector<sf::Sprite*> test;
+        test.push_back(new sf::Sprite);
+        test.push_back(new sf::Sprite);
 
+        sf::Texture pomme;
+        pomme.loadFromFile("apple.png");
+
+        sf::Texture head;
+        head.loadFromFile("head.png");
+
+        sf::Texture body;
+        body.loadFromFile("body.png");
+
+        std::vector<Snake::Position> pos = jeu.getSnakePositions();
+
+        test[0]->setTexture(pomme);
+        test[0]->setPosition(jeu.getFruit().getX() * 32, jeu.getFruit().getY() * 32);
+        window.draw(*test[0]);
+
+        test[1]->setTexture(head);
+        test[1]->setPosition(pos[0].getX() * 32, pos[0].getY() * 32);
+
+        for (int i = 1; i != pos.size(); i++) {
+            test.push_back(new sf::Sprite);
+            test[i + 1]->setTexture(body);
+            test[i + 1]->setPosition(pos[i].getX() * 32, pos[i].getY() * 32);
+            window.draw(*test[i+1]);
+        }
+
+        window.draw(*test[1]);
+
+        window.display();
         //envoyer les evenements au jeu
         jeu.setEvent(touches);
     }
