@@ -19,8 +19,9 @@ Dynlib::Dynlib::~Dynlib()
 {
     if (_dynlib)
         return;
-    if (dlclose(_dynlib))
-        throw DynlibError(dlerror(), "dlclose");
+    dlclose(_dynlib);
+    // if (dlclose(_dynlib))
+    //     throw DynlibError(dlerror(), "dlclose");
 }
 
 void *Dynlib::Dynlib::getSymbol(std::string const &symname)
@@ -31,7 +32,7 @@ void *Dynlib::Dynlib::getSymbol(std::string const &symname)
         ptr = dlsym(_dynlib, symname.data());
         if (!ptr)
             throw DynlibError(dlerror(), "dlsym");
-        _symbol.insert(std::pair<std::string const &, void *>(symname, ptr));
+        _symbol.insert(std::pair<std::string, void *>(symname, ptr));
     } else
         ptr = _symbol.find(symname)->second;
     return (ptr);

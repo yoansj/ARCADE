@@ -17,7 +17,8 @@ namespace Dynlib
 {
     class DynlibError : public std::exception {
         public:
-            DynlibError(std::string const &message, std::string const &type) { };
+            DynlibError(std::string const &message, std::string const &type) :
+                _message(message), _type(type) { };
 
             std::string const &getType() const { return _type; };
             char const *what() const noexcept override { return _message.data(); };
@@ -37,12 +38,14 @@ namespace Dynlib
             template<typename T>
             std::unique_ptr<T> classFactory(std::string const &symname)
             {
-                return ((std::unique_ptr<T>(*)(void))(getSymbol(symname))->second)();
+                return (
+                    ((std::unique_ptr<T>(*)(void)) (getSymbol(symname)))()
+                );
             }
 
         private:
             void *_dynlib;
-            std::map<std::string const &, void *> _symbol;
+            std::map<std::string, void *> _symbol;
     };
 }
 
