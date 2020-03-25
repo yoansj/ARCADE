@@ -56,8 +56,8 @@ void Snake::run()
 
     /* Collision avec soi même */
     for (int i = 1; _positions.begin() + i != _positions.end(); i++) {
-        //if (_positions[0].getX() == _positions[i].getX() && _positions[0].getY() == _positions[i].getY())
-            //std::cout << "T'es mort" << std::endl; //Ligne de collision avec soi même à changer
+        if (_positions[0].getX() == _positions[i].getX() && _positions[0].getY() == _positions[i].getY())
+            std::cout << "T'es mort" << std::endl; //Ligne de collision avec soi même à changer
     }
 
     /* Update des positions peut être à mettre dans une fonction membre */
