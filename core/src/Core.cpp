@@ -12,31 +12,23 @@ Arcade::Core::Core(std::string const &libPath) :
      _libGraphVector({}), _libGamesVector({}), _isRunning(true), _isPaused(false),
      _onMenu(true), _onGameOver(false), _menuSelectedGame(0)
 {
-    getUserName();
+    std::cout << "Enter your name (Max 8) : ";
+    std::string tmpName;
+    std::getline(std::cin, tmpName);
+    tmpName.substr(0, 8);
+    if (std::cin.bad() || std::cin.eof()) _playerName = "Noob";
+    else _playerName = tmpName;
+    Sound::Get().Play(0, 0.2);
     searchGameLib();
     searchGraphLib();
     loadGraphLib(_libGraph);
+
     getLibVector();
     getGamesVector();
 }
 
 Arcade::Core::~Core()
 { }
-
-void Arcade::Core::getUserName()
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(3, 8);
-
-    std::cout << "Enter your name (Max 8) : ";
-    std::string tmpName;
-    std::getline(std::cin, tmpName);
-    if (tmpName.size() > 8) tmpName.erase(tmpName.begin() + 8, tmpName.end());
-    if (std::cin.bad() || std::cin.eof()) _playerName = "Noob";
-    else _playerName = tmpName;
-    Sound::Get().Play(dis(gen), 0.1);
-}
 
 void Arcade::Core::loadGraphLib(std::unique_ptr<Dynlib::Dynlib> &lib)
 {
@@ -126,7 +118,6 @@ void Arcade::Core::frame()
         _graphPtr->clearScreen();
         event = _graphPtr->getEvent();
         if (findEvent(Arcade::QUIT, event)) {
-            Sound::Get().Play(1, "0.2");
             _isRunning = false;
             return;
         }
@@ -234,15 +225,12 @@ void Arcade::Core::manageEvent(std::vector<Arcade::Arcade_key> eventArr)
         if (event == Arcade::UP && _onMenu) {
             if ((unsigned int)_menuSelectedGame + 1 > _libGameList.size() - 1) _menuSelectedGame = 0;
             else _menuSelectedGame++;
-            Sound::Get().Play(2, "0.2");
         }
         if (event == Arcade::DOWN && _onMenu) {
             if (_menuSelectedGame == 0) _menuSelectedGame = _libGameList.size() - 1;
             else _menuSelectedGame--;
-            Sound::Get().Play(2, "0.2");
         }
         if (event == Arcade::USE && _onMenu && !_onGameOver) {
-            Sound::Get().Play(0, "0.2");
             _onMenu = false;
             Dynlib::Dynlib *ptr = _libGame.release();
             for (auto const &[first, second] : _libGameList)
@@ -251,10 +239,8 @@ void Arcade::Core::manageEvent(std::vector<Arcade::Arcade_key> eventArr)
             loadGameLib(_libGame);
             delete ptr;
         }
-        if (event == Arcade::MENU) {
-            Sound::Get().Play(1, "0.2");
+        if (event == Arcade::MENU)
             _onMenu = true;
-        }
         if (event == Arcade::USE && _onGameOver)
             _onGameOver = false;
     }

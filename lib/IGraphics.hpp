@@ -22,14 +22,13 @@ class IGraphics {
         virtual void printMap(std::vector<std::vector<int>> map) = 0;
         virtual void printShoot(std::vector<std::vector<int>>) = 0;
         virtual void printUI(int score, std::string name) = 0;
+        virtual void printPlayer(std::vector<std::vector<int>>) = 0;
 
         virtual void clearScreen() = 0;
         virtual void refreshScreen() = 0;
 
         virtual void setSprite(std::map<Arcade::Block_tile, std::string>) = 0;
         virtual void setColor(std::map<Arcade::Block_tile, Arcade::Text>) = 0;
-
-        virtual void printPlayer(std::vector<std::vector<int>>) = 0;
 
         virtual std::vector<Arcade::Arcade_key> getEvent() const = 0;
 };

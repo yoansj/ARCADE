@@ -13,7 +13,6 @@
 #include <regex>
 #include <chrono>
 #include <filesystem>
-#include <random>
 #include "IGraphics.hpp"
 #include "IGames.hpp"
 #include "Dynlib.hpp"
@@ -54,7 +53,6 @@ namespace Arcade
             class Sound {
                 public:
                     static Sound &Get() {static Sound instance; return (instance);};
-
                     bool Play(unsigned int index, float volume = 1) {
                         if (index > _soundPath.size()) return (false);
                         volume *= 2;
@@ -63,19 +61,10 @@ namespace Arcade
                         return (true);
                     }
 
-                    bool Play(unsigned int index, std::string volume = "1") {
-                        if (index > _soundPath.size()) return (false);
-                        std::string tmp = "play -q -v " + volume + " " + _soundPath[index] + " &";
-                        std::system(tmp.c_str());
-                        return (true);
-                    }
-
                 private:
                     Sound& operator= (const Sound&) = delete;
                     Sound (const Sound&) = delete;
-                    Sound() : _soundPath({{"./games/sounds/bonus_sound.mp3"}, {"./games/sounds/death_sound.mp3"}, {"./games/sounds/menu_select.mp3"},
-                    {"./games/sounds/intro1.ogg"}, {"./games/sounds/intro2.ogg"}, {"./games/sounds/intro3.ogg"}, {"./games/sounds/intro4.ogg"}, {"./games/sounds/intro5.ogg"},
-                    {"./games/sounds/intro6.ogg"}})
+                    Sound() : _soundPath({{"./games/sounds/bonus_sound.mp3"}, {"./games/sounds/death_sound.mp3"}})
                     {};
                     ~Sound() = default;
                     std::vector<std::string> _soundPath;
@@ -101,7 +90,6 @@ namespace Arcade
             int _menuSelectedGame;
             std::string _playerName;
 
-            void getUserName();
             void searchGraphLib();
             void searchGameLib();
 

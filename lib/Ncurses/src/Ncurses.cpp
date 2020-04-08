@@ -152,7 +152,9 @@ void Arcade::Ncurses::printLose(int score, std::string name)
     mvprintw(14, _w / 2 - 32, " \\______  (____  /__|_|  /\\___  >  \\_______  /\\_/  \\___  >__|   ");
     mvprintw(15, _w / 2 - 32, "        \\/     \\/      \\/     \\/           \\/          \\/       ");
 
-    mvprintw(20, _w / 2 - ((name + ": " + std::to_string(score)).size() / 2), (name + ": " + std::to_string(score)).data());
+    mvprintw(20, _w / 2 - ((name + ", you lost !").size() / 2), (name + ", you lost !").data());
+    mvprintw(21, _w / 2 - (("Score: " + std::to_string(score)).size() / 2), ("Score: " + std::to_string(score)).data());
+    mvprintw(23, _w / 2 - (26 / 2), "Keep your Determination :)");
 }
 
 void Arcade::Ncurses::printUI(int score, std::string name)
